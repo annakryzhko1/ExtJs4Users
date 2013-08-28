@@ -3,7 +3,14 @@ Ext.define('AM.view.user.List' ,{
     alias: 'widget.userlist',
 	store: 'Users',
     title: 'All Users',
-
+	dockedItems: [{
+    xtype: 'toolbar',
+    dock: 'top',
+    	items: [
+    	    { xtype: 'textfield', name: 'nameFilter', fieldLabel: 'Filter by name'},
+        	{ xtype: 'button', text: 'Sort by domen', action: 'sortByDomain' }
+    	]
+	}],
     initComponent: function() {
         
         this.columns = [

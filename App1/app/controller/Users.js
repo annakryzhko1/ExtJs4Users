@@ -15,6 +15,19 @@ Ext.define('AM.controller.Users', {
     ],
     
     init: function() {
+    	this.sorters = { 
+    		byDomain: new Ext.util.Sorter({
+        		sorterFn: function(o1, o2) {
+	            var domain1 = o1.get('email').split('@')[1],
+	            	domain2 = o2.get('email').split('@')[1]
+	            if (domain1 === domain2) {
+	                return 0;
+	            }	
+	            return domain1 < domain2 ? -1 : 1;
+        	}
+    	})
+    	};
+    	
         this.control({
             'userlist': {
                 itemdblclick: this.editUser
@@ -24,6 +37,12 @@ Ext.define('AM.controller.Users', {
             },            
             'useredit button[action=delete]': {
                 click: this.deleteUser
+            },
+            'userlist textfield[name=nameFilter]': {
+                change: this.filterByName
+            },
+            'userlist button[action=sortByDomain]': {
+                click: this.sortByDomain
             }
         });
     },
@@ -56,6 +75,19 @@ Ext.define('AM.controller.Users', {
 	    win.close();
 	    
 	    this.getUsersStore().sync();
+	},
+	
+	filterByName: function(textfield, newValue, oldValue, eOpts ) {
+		var store = this.getUsersStore();
+		store.clearFilter(true);
+		store.filter("name", new RegExp(newValue, "i"));	
+	},
+	
+	sortByDomain: function(button, e, eOpts) {
+		var sorter = this.sorters['byDomain'],
+		 	dir = sorter.direction; 
+		sorter.setDirection((dir=='ASC') ? 'DESC': 'ASC')
+		this.getUsersStore().sort(sorter);		
 	}
     
 });
